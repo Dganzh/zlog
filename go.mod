@@ -1,4 +1,4 @@
-module zlog
+module github.com/dganzh/zlog
 
 go 1.13
 
