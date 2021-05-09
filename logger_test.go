@@ -7,9 +7,9 @@ import (
 
 func TestFileLog(t *testing.T) {
 	cfg := &Config{
-		logLevel: "info",
-		logEncoding: "json",
-		logFile: "./logs/test/access.log",
+		LogLevel:    "info",
+		LogEncoding: "json",
+		LogFile:     "./logs/test/access.log",
 	}
 	log := NewLogger(cfg)
 	log.Debugf("这是一条测试用里: %+v", cfg)

@@ -21,18 +21,18 @@ const (
 
 
 type Config struct {
-	logLevel    string
-	logEncoding string
-	logCaller   string
-	logFile 	string
+	LogLevel    string
+	LogEncoding string
+	LogCaller   string
+	LogFile     string
 }
 
 
 var defaultConfig = Config{
-	logLevel:    LogLevelDebug,
-	logEncoding: LogEncodingJson,
-	logCaller:   "",
-	logFile: "",
+	LogLevel:    LogLevelDebug,
+	LogEncoding: LogEncodingJson,
+	LogCaller:   "",
+	LogFile:     "",
 }
 
 var logConfig = defaultConfig
@@ -50,12 +50,24 @@ func NewLogger(cfg *Config) *zap.SugaredLogger {
 	return logger
 }
 
+
+func InitFileLogger(level string, path string) {
+	cfg := &Config{
+		LogLevel: level,
+		LogEncoding: LogEncodingJson,
+		LogCaller:   "",
+		LogFile:     path,
+	}
+	NewLogger(cfg)
+}
+
+
 func GetLogLevel() string {
-	return logConfig.logLevel
+	return logConfig.LogLevel
 }
 
 func GetLogEncoding() string {
-	return logConfig.logEncoding
+	return logConfig.LogEncoding
 }
 
 
@@ -65,7 +77,7 @@ func initDefaultLogger() {
 		LevelKey:       "level",
 		NameKey:        "logger",
 		MessageKey:     "msg",
-		CallerKey:      logConfig.logCaller,
+		CallerKey:      logConfig.LogCaller,
 		LineEnding:     zapcore.DefaultLineEnding,
 		EncodeLevel:    zapcore.LowercaseLevelEncoder,
 		EncodeTime:     zapcore.ISO8601TimeEncoder,
@@ -73,9 +85,9 @@ func initDefaultLogger() {
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 	loggerCfg := zap.Config{
-		Level:            getLogLevel(logConfig.logLevel),
+		Level:            getLogLevel(logConfig.LogLevel),
 		Development:      false,
-		Encoding:         logConfig.logEncoding,
+		Encoding:         logConfig.LogEncoding,
 		EncoderConfig:    encoderCfg,
 		OutputPaths:      []string{"stderr"},
 		ErrorOutputPaths: []string{"stderr"},
@@ -93,7 +105,7 @@ func initLogger() {
 		LevelKey:       "level",
 		NameKey:        "logger",
 		MessageKey:     "msg",
-		CallerKey:      logConfig.logCaller,
+		CallerKey:      logConfig.LogCaller,
 		LineEnding:     zapcore.DefaultLineEnding,
 		EncodeLevel:    zapcore.LowercaseLevelEncoder,
 		EncodeTime:     zapcore.ISO8601TimeEncoder,
@@ -102,8 +114,8 @@ func initLogger() {
 	}
 	core := zapcore.NewCore(
 		zapcore.NewJSONEncoder(encoderCfg),
-		zapcore.AddSync(getWriter(logConfig.logFile)),
-		getLogLevel(logConfig.logLevel),
+		zapcore.AddSync(getWriter(logConfig.LogFile)),
+		getLogLevel(logConfig.LogLevel),
 	)
 	l := zap.New(core, zap.AddCallerSkip(1), zap.AddStacktrace(zap.ErrorLevel))
 	logger = l.Sugar()
